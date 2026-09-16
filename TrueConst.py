@@ -83,3 +83,14 @@ N204_UDMH = {
     "expansion_ratio_1st_stage": 26.2,
     "expansion_ratio_2nd_stage": 81.3, 
 }
+
+mission_delV = 12.3
+pyld_mass = 26000
+fairing = {
+    'fairing_height': 13,
+    'fairing_diameter': 5.2,    
+}
+L_D = 13
+thrust_weight_ratio_stage_1_min = 1.3
+thrust_weight_ratio_stage_n_min = .76
+stage_count_min = 2
