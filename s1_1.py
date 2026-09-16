@@ -31,7 +31,7 @@ def calculate_stage_masses(
     lambda_2 = r_2 - delta_2
 
     #check feasibility and pass error if applicable
-    error = [lambda_1 <= 0, lambda_2 <=0] #note error now list of two booleans, gets output and can be used when sweeping through delta_v_1 values to know which values are invalid
+    error = [lambda_1 <= 0, lambda_2 <=0] #NOTE: error is a list of two booleans, gets output and can be used when sweeping through delta_v_1 values to know which values are invalid
     if any(error): #if either entry in error is true
         m_0 = m_0_2 = m_in_1 = m_in_2 = m_pr_1 = m_pr_2 = 0.0 
 
