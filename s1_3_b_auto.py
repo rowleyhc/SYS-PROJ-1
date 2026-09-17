@@ -16,9 +16,10 @@ def min_cost_finder(
     dv_step: float
 ):
     all_results = sweep_delta_v(
-        propellant=propellant1,
+        propellant1=propellant1,
         propellant2=propellant2,
         delta_v_total=delta_v_total,
+        delta_v1_min=delta_v1_min,
         m_pl=m_pl,
         g0=g0,
         dv_step=5
