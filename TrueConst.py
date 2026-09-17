@@ -84,13 +84,21 @@ N204_UDMH = {
     "expansion_ratio_2nd_stage": 81.3, 
 }
 
-mission_delV = 12.3
-pyld_mass = 26000
+mission_delV_ms = 12.3
+pyld_mass_kg = 26000
 fairing = {
-    'fairing_height': 13,
-    'fairing_diameter': 5.2,    
+    'fairing_height_m': 13,
+    'fairing_diameter_m': 5.2,    
 }
 L_D = 13
 thrust_weight_ratio_stage_1_min = 1.3
-thrust_weight_ratio_stage_n_min = .76
+thrust_weight_ratio_stage_n_min = 0.76
 stage_count_min = 2
+
+LH2_rho_kg_m3 = 71
+LOX_rho_kg_m3 = 1140
+RP1_rho_kg_m3 = 820
+LCH4_rho_kg_m3 = 423
+Solid_rho_kg_m3 = 1680
+N2O4_rho_kg_m3 = 1442
+UDMH_rho_kg_m3 = 791
