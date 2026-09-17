@@ -4,7 +4,7 @@
 
 import math
 from s1_sweep import sweep_delta_v
-from s1_3_cost.py import stage_cost
+from s1_3_cost import stage_cost
 
 def min_cost_finder(
     propellant1:dict,
