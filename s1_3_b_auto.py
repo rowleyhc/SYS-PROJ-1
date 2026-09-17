@@ -9,6 +9,7 @@ from s1_3_cost import stage_cost
 def min_cost_finder(
     propellant1:dict,
     propellant2:dict,
+    delta_v_total: float,
     delta_v1_min: float,
     m_pl: float,
     g0: float,
