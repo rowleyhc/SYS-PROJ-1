@@ -5,6 +5,8 @@
 import numpy as numpy
 import matplotlib.pyplot as plt
 import math
+import csv
+import os
 
 # LOX/LCH4
 LOX_LCH4 = {
@@ -55,7 +57,7 @@ LOX_RP1 = {
 }
 
 # Solid
-Solid = {
+SOLID = {
     "fuel_mass_ratio": None,  # N/A
     "inert_mass_fraction": 0.087,
     "isp_sea_level_s": 269,
@@ -85,6 +87,9 @@ N204_UDMH = {
     "expansion_ratio_1st_stage": 26.2,
     "expansion_ratio_2nd_stage": 81.3, 
 }
+
+PROPELLANTS = [LOX_LCH4, LOX_LH2, LOX_RP1, SOLID, N204_UDMH]
+PROPELLANT_NAMES = ["LOX/LCH4", "LOX/LH2", "LOX/RP1", "SOLID", "N204/UDMH"]
 
 mission_delV_ms = 12300
 pyld_mass_kg = 26000
@@ -282,24 +287,76 @@ def min_cost_finder(
 
     return optimal_solution
 
+# AUTHOR: SHARAN SAJIV MENON
+# Function to run the analysis for all propellants against each other, runs all 25 combinations
+def analyze_propellants_matrix():
+    results = {}
+    for i,p1 in enumerate(PROPELLANTS): # 2nd stage?
+        propellant_results = []
+        for j,p2 in enumerate(PROPELLANTS): # 1st stage?
+            optimized_mass = min_mass_finder(p1, p2, mission_delV_ms, 100, pyld_mass_kg, g0=9.8, dv_step=1)
+            optimized_cost = min_cost_finder(p1, p2, mission_delV_ms, 100, pyld_mass_kg, g0=9.8, dv_step=1)
+            ## mass solution
+            mass_optimized_mass = optimized_mass['m_0']  / 1e3 # add to table metric tons
+            mass_optimized_cost_1 = stage_cost(optimized_mass['m_in_1'])  
+            mass_optimized_cost_2 = stage_cost(optimized_mass['m_in_2'])
+            mass_optimized_total_cost = mass_optimized_cost_1 + mass_optimized_cost_2 # add to table
+            mass_optimized_delta_v1 = optimized_mass['delta_v_1']
+            mass_optimized_delta_v_fraction = optimized_mass['delta_v_1'] / mission_delV_ms
+            
+            ## cost solution
+            cost_optimized_mass = optimized_cost['m_0'] / 1e3 # add to table, metric tons
+            cost_optimized_cost_1 = stage_cost(optimized_cost['m_in_1']) # millions of dollars
+            cost_optimized_cost_2 = stage_cost(optimized_cost['m_in_2'])
+            cost_optimized_total_cost = cost_optimized_cost_1 + cost_optimized_cost_2 # add to table
+            cost_optimized_delta_v1 = optimized_cost['delta_v_1']
+            cost_optimized_delta_v_fraction = optimized_cost['delta_v_1'] / mission_delV_ms
+            propellant_results.append([
+                PROPELLANT_NAMES[j],
+                mass_optimized_mass,
+                mass_optimized_delta_v1,
+                mass_optimized_delta_v_fraction,
+                mass_optimized_total_cost,
+                cost_optimized_total_cost,
+                cost_optimized_delta_v1,
+                cost_optimized_delta_v_fraction,
+                cost_optimized_mass
+            ])
+        results[PROPELLANT_NAMES[i]] = propellant_results
+    return results
+
+# AUTHOR: SHARAN SAJIV MENON     
+def write_to_csv(matrix, propellant_name):
+    """
+    Creates a matrix for a single 2nd stage propellant and writes it to a csv.
+
+    """
+    # write a single propellant's results to a csv file, for individual analysis use 
+    second_stage_propellant = matrix[propellant_name] # 2nd stage propellant
+    with open(f"{propellant_name.replace('/', '_')}.csv", "w", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerow(['Second Stage Propellant'] + [propellant_name for i in range(5)])
+        writer.writerow(['First Stage Propellant'] + PROPELLANT_NAMES)
+        row_names = [
+            'Minimum LV gross mass soln. (t)',
+            'Min. LV mass soln. stage 1 ΔV1 (km/s)',
+            'Min. LV mass soln. stage 1 ΔV fraction (-)',
+            'Min. LV mass program cost ($B2025)',
+            'Min. program cost soln. ($B2025)',
+            'Min. program cost soln. stage 1 ΔV1 (km/s)',
+            'Min. program cost soln. stage 1 ΔV fraction (-)',
+            'Min. program cost soln. gross mass (t)',
+
+        ]
+        for i, row, in enumerate(row_names):
+            row_data = [row]
+            for propellant in second_stage_propellant:
+                row_data.append(propellant[i + 1])
+            writer.writerow(row_data)  
+
 if __name__ == "__main__":
 
-    min_mass = min_mass_finder(LOX_LH2, LOX_LH2, mission_delV_ms, 100, pyld_mass_kg, g0=9.8, dv_step=100)
-    # print(min_mass)
-    mass = min_mass['m_0']
-    cost_1 = stage_cost(min_mass['m_in_1'])  
-    cost_2 = stage_cost(min_mass['m_in_2']) 
-    print("MINIMUM MASS ANALYSIS")
-    print(f"dv1: {min_mass['delta_v_1']}, dv2: {min_mass['delta_v_2']}")
-    print(f"mass: {mass / 1e3   }") 
-    print(f"cost: {cost_1 + cost_2}")
-
-    print("MINIMUM COST ANALYSIS")
-    min_cost = min_cost_finder(LOX_LH2, LOX_LH2, mission_delV_ms, 100, pyld_mass_kg, g0=9.8, dv_step=100)
-    # calculate stage cost of min_cost['m_in_1']
-    mass = min_cost['m_0']
-    cost_1 = stage_cost(min_cost['m_in_1'])  
-    cost_2 = stage_cost(min_cost['m_in_2']) 
-    print(f"dv1: {min_cost['delta_v_1']}, dv2: {min_cost['delta_v_2']}")
-    print(f"mass: {mass / 1e3   }") 
-    print(f"cost: {cost_1 + cost_2}")
+    matrix = analyze_propellants_matrix()
+    write_to_csv(matrix, "LOX/LH2")
+    print(matrix)
+    
