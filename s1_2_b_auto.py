@@ -19,6 +19,7 @@ def min_mass_finder(
         propellant1=propellant1,
         propellant2=propellant2,
         delta_v_total=delta_v_total,
+        delta_v1_min=delta_v1_min,
         m_pl=m_pl,
         g0=g0,
         dv_step=5 #just 5 m/s steps for now(can reduce later)
@@ -30,8 +31,8 @@ def min_mass_finder(
         if not any(entry["Error"]): #check to make sure mass finder did not throw an error
             valid_results.append(entry)
 
-        optimal_solution=valid_results[0] #collect valid results
-        min_mass =valid_results[0]["m_0"] #set initial benchmark for minimum mass
+    optimal_solution=valid_results[0] #collect valid results
+    min_mass =valid_results[0]["m_0"] #set initial benchmark for minimum mass
 
     for entry in valid_results: #loop through valid_results and get minimum mass, return optimal solution results
         if entry["m_0"] < min_mass:
