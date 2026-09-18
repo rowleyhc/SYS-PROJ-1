@@ -22,7 +22,7 @@ def min_cost_finder(
         delta_v1_min=delta_v1_min,
         m_pl=m_pl,
         g0=g0,
-        dv_step=5
+        dv_step=dv_step
     )
 
     valid_results=[]

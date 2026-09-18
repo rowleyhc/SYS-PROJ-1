@@ -13,6 +13,7 @@ def min_mass_finder(
         delta_v1_min: float,
         m_pl: float,
         g0: float,
+        dv_step: float
 ):
 
     all_results = sweep_delta_v( #sweep across all delta_v for specified prop combo
@@ -22,7 +23,7 @@ def min_mass_finder(
         delta_v1_min=delta_v1_min,
         m_pl=m_pl,
         g0=g0,
-        dv_step=5 #just 5 m/s steps for now(can reduce later)
+        dv_step=dv_step #just 5 m/s steps for now(can reduce later)
     )
 
     valid_results=[]

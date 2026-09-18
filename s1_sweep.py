@@ -21,14 +21,14 @@ def sweep_delta_v(
     dv1 = delta_v1_min
     while(dv1 < delta_v_total):
         sweep = calculate_stage_masses(
-            delta_v_1=dv1,
+            dV_1=dv1,
             delta_1=propellant1["inert_mass_fraction"],
             delta_2=propellant2["inert_mass_fraction"],
             isp_1=propellant1["isp_sea_level_s"],
             isp_2=propellant2["isp_vacuum_s"],
-            delta_v_total=delta_v_total,
+            dV_tot=delta_v_total,
             m_pl=m_pl,
-            g0=g0,
+            g_0=g0,
         )
 
         data = {
