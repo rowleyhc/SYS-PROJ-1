@@ -1,7 +1,9 @@
-# Author: Jacob Harmon
-# Date: 9/16/2026
+# Author: Sharan Menon
+# Date: 9/17/2026
 
-# List of true constants for propelant mixures
+# Created for testing and debugging purposes
+
+
 import numpy as numpy
 import matplotlib.pyplot as plt
 import math

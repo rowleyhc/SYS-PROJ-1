@@ -30,7 +30,6 @@ def min_cost_finder(
     for entry in all_results:
         if not any(entry["Error"]): #check to make sure mass finder did not throw an error
             valid_results.append(entry)
-
     optimal_solution=valid_results[0] #collect valid results
     min_cost = stage_cost(valid_results[0]["m_in_1"]) + stage_cost(valid_results[0]["m_in_2"]) #set initial benchmark for minimum mass
 

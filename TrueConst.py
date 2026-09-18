@@ -53,7 +53,7 @@ LOX_RP1 = {
 }
 
 # Solid
-Solid = {
+SOLID = {
     "fuel_mass_ratio": None,  # N/A
     "inert_mass_fraction": 0.087,
     "isp_sea_level_s": 269,
@@ -84,7 +84,7 @@ N204_UDMH = {
     "expansion_ratio_2nd_stage": 81.3, 
 }
 
-mission_delV_ms = 12.3
+mission_delV_ms = 12300
 pyld_mass_kg = 26000
 fairing = {
     'fairing_height_m': 13,
@@ -99,6 +99,10 @@ LH2_rho_kg_m3 = 71
 LOX_rho_kg_m3 = 1140
 RP1_rho_kg_m3 = 820
 LCH4_rho_kg_m3 = 423
-Solid_rho_kg_m3 = 1680
+SOLID_rho_kg_m3 = 1680
 N2O4_rho_kg_m3 = 1442
 UDMH_rho_kg_m3 = 791
+
+PROPELLANTS = [LOX_LCH4, LOX_LH2, LOX_RP1, SOLID, N204_UDMH]
+PROPELLANT_NAMES = ["LOX/LCH4", "LOX/LH2", "LOX/RP1", "SOLID", "N204/UDMH"]
+

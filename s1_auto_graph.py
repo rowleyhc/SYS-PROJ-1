@@ -28,7 +28,7 @@ PROPS = {
     "LOX/LCH4": TrueConst.LOX_LCH4,
     "LOX/LH2": TrueConst.LOX_LH2,
     "LOX/RP1": TrueConst.LOX_RP1,
-    "Solid": TrueConst.Solid,
+    "Solid": TrueConst.SOLID,
     "N2O4/UDMH": TrueConst.N204_UDMH,
 }
 

@@ -27,11 +27,9 @@ def min_mass_finder(
     )
 
     valid_results=[]
-
     for entry in all_results:
         if not any(entry["Error"]): #check to make sure mass finder did not throw an error
             valid_results.append(entry)
-
     optimal_solution=valid_results[0] #collect valid results
     min_mass =valid_results[0]["m_0"] #set initial benchmark for minimum mass
 
