@@ -17,17 +17,13 @@ def analyze_propellants_matrix():
             optimized_cost = min_cost_finder(p1, p2, TrueConst.mission_delV_ms, 100, TrueConst.pyld_mass_kg, g0=9.8, dv_step=1)
             ## mass solution
             mass_optimized_mass = optimized_mass['m_0']  / 1e3 # add to table metric tons
-            mass_optimized_cost_1 = stage_cost(optimized_mass['m_in_1'])  
-            mass_optimized_cost_2 = stage_cost(optimized_mass['m_in_2'])
-            mass_optimized_total_cost = mass_optimized_cost_1 + mass_optimized_cost_2 # add to table
+            mass_optimized_total_cost = (stage_cost(optimized_mass['m_in_1']) + stage_cost(optimized_mass['m_in_2'])) / 1e3  # $B2025, add to table
             mass_optimized_delta_v1 = optimized_mass['delta_v_1']
             mass_optimized_delta_v_fraction = optimized_mass['delta_v_1'] / TrueConst.mission_delV_ms
             
             ## cost solution
             cost_optimized_mass = optimized_cost['m_0'] / 1e3 # add to table, metric tons
-            cost_optimized_cost_1 = stage_cost(optimized_cost['m_in_1']) # millions of dollars
-            cost_optimized_cost_2 = stage_cost(optimized_cost['m_in_2'])
-            cost_optimized_total_cost = cost_optimized_cost_1 + cost_optimized_cost_2 # add to table
+            cost_optimized_total_cost = (stage_cost(optimized_cost['m_in_1']) + stage_cost(optimized_cost['m_in_2'])) / 1e3  # $B2025, add to table
             cost_optimized_delta_v1 = optimized_cost['delta_v_1']
             cost_optimized_delta_v_fraction = optimized_cost['delta_v_1'] / TrueConst.mission_delV_ms
             propellant_results.append([
@@ -52,17 +48,17 @@ def write_to_csv(matrix, propellant_name):
     """
     # write a single propellant's results to a csv file, for individual analysis use 
     second_stage_propellant = matrix[propellant_name] # 2nd stage propellant
-    with open(f"{propellant_name.replace('/', '_')}.csv", "w", newline="") as file:
+    with open(f"{propellant_name.replace('/', '_')}.csv", "w", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
         writer.writerow(['First Stage Propellant'] + [propellant_name for i in range(5)])
         writer.writerow(['Second Stage Propellant'] + TrueConst.PROPELLANT_NAMES)
         row_names = [
             'Minimum LV gross mass soln. (t)',
-            'Min. LV mass soln. stage 1 ΔV1 (km/s)',
+            'Min. LV mass soln. stage 1 ΔV1 (m/s)',
             'Min. LV mass soln. stage 1 ΔV fraction (-)',
             'Min. LV mass program cost ($B2025)',
             'Min. program cost soln. ($B2025)',
-            'Min. program cost soln. stage 1 ΔV1 (km/s)',
+            'Min. program cost soln. stage 1 ΔV1 (m/s)',
             'Min. program cost soln. stage 1 ΔV fraction (-)',
             'Min. program cost soln. gross mass (t)',
 
