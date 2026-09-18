@@ -54,8 +54,8 @@ def write_to_csv(matrix, propellant_name):
     second_stage_propellant = matrix[propellant_name] # 2nd stage propellant
     with open(f"{propellant_name.replace('/', '_')}.csv", "w", newline="") as file:
         writer = csv.writer(file)
-        writer.writerow(['Second Stage Propellant'] + [propellant_name for i in range(5)])
-        writer.writerow(['First Stage Propellant'] + TrueConst.PROPELLANT_NAMES)
+        writer.writerow(['First Stage Propellant'] + [propellant_name for i in range(5)])
+        writer.writerow(['Second Stage Propellant'] + TrueConst.PROPELLANT_NAMES)
         row_names = [
             'Minimum LV gross mass soln. (t)',
             'Min. LV mass soln. stage 1 ΔV1 (km/s)',
