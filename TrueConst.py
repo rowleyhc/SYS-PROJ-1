@@ -100,14 +100,15 @@ stage_count_min = 2
 LH2_rho_kg_m3 = 71
 LOX_rho_kg_m3 = 1140
 RP1_rho_kg_m3 = 820
-LCH4_rho_kg_m3 = 423
+LCH4_rho_kg_m3 = 423t
 SOLID_rho_kg_m3 = 1680
 N2O4_rho_kg_m3 = 1442
 UDMH_rho_kg_m3 = 791
 
 G0 = 9.8
 
-PROPELLANTS = [LOX_LCH4, LOX_LH2, LOX_RP1, SOLID, N204_UDMH]
+PROPELLANTS = [LOX_LCH4, LOX_LH2, LOX_RP1, SOLID, N2O4_UDMH]
 PROPELLANT_NAMES = ["LOX/LCH4", "LOX/LH2", "LOX/RP1", "SOLID", "N204/UDMH"]
 PROPS = dict(zip(PROPELLANT_NAMES, PROPELLANTS))
+N204_UDMH = N2O4_UDMH  # backwards-compatible alias: mix was renamed to N2O4_UDMH
 
