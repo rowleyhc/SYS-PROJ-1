@@ -22,13 +22,13 @@ from matplotlib.patches import Rectangle
 
 import TrueConst as T
 from s1_make_csv import analyze_propellants_matrix
-from s1_format import sf
+# from s1_format import sf
 
 NAMES = T.PROPELLANT_NAMES
 INITIALS = {"Gregory Kahn": "GK", "Henry Rowley": "HR", "Jacob Harmon": "JH",
             "Sharan Menon": "SM", "Shaunn Pavelik": "SP"}
 SECOND_COLORS = {"LOX/LCH4": "#2a9d8f", "LOX/LH2": "#1f5fa8", "LOX/RP1": "#e76f51",
-                 "Solid": "#6b6b6b", "N2O4/UDMH": "#9b5de5"}
+                 "SOLID": "#6b6b6b", "N2O4/UDMH": "#9b5de5"}
 N_TOP = 3
 
 
@@ -61,14 +61,14 @@ def heatmaps(results, path):
             for c in range(5):
                 v = grid[r, c]
                 dark = np.log(v / grid.min()) > 0.6 * np.log(grid.max() / grid.min())
-                ax.text(c, r, sf(v), ha="center", va="center", fontsize=15,
+                ax.text(c, r, round(v, 2), ha="center", va="center", fontsize=15,
                         fontweight="bold", color="white" if dark else "black")
         top = ranked(results, design, key)[:N_TOP]
-        for rank, (n1, n2, _) in enumerate(top, 1):
-            c, r = NAMES.index(n1), NAMES.index(n2)
-            ax.add_patch(Rectangle((c - .5, r - .5), 1, 1, fill=False, ec="#00a651", lw=4.5))
-            ax.text(c + .42, r - .40, f"#{rank}", ha="right", va="top", fontsize=12,
-                    fontweight="bold", color="#00a651")
+        # for rank, (n1, n2, _) in enumerate(top, 1): # we chose to remove this ranking thing
+        #     c, r = NAMES.index(n1), NAMES.index(n2)
+        #     ax.add_patch(Rectangle((c - .5, r - .5), 1, 1, fill=False, ec="#00a651", lw=4.5))
+        #     ax.text(c + .42, r - .40, f"#{rank}", ha="right", va="top", fontsize=12,
+        #             fontweight="bold", color="#00a651")
         ax.set_xticks(range(5), [f"{n}\n({INITIALS[T.COLUMN_OWNER[n]]})" for n in NAMES])
         ax.set_yticks(range(5), NAMES)
         ax.set_xlabel("First-stage propellant (analyst)")
@@ -96,13 +96,13 @@ def ranked_designs(results, path):
     for yy, (n1, n2, m0) in zip(y, order):
         col = SECOND_COLORS[n2]
         axm.barh(yy, m0, color=col, edgecolor="black", lw=.6)
-        axm.text(m0 * 1.06, yy, sf(m0), va="center", fontsize=12)
+        axm.text(m0 * 1.06, yy, round(m0, 2), va="center", fontsize=12)
         cm = results[n1][n2]["mass"]["cost_B"]
         cc = results[n1][n2]["cost"]["cost_B"]
         axc.plot([cc, cm], [yy, yy], color=col, lw=2)
         axc.plot(cm, yy, "o", ms=10, color=col, mec="black")
         axc.plot(cc, yy, "D", ms=9, mfc="white", mec=col, mew=2.2)
-        axc.text(max(cc, cm) * 1.07, yy, sf(cc), va="center", fontsize=12)
+        axc.text(max(cc, cm) * 1.07, yy, round(cc, 2), va="center", fontsize=12)
     for yy in y[:N_TOP]:
         for ax in (axm, axc):
             ax.axhspan(yy - .5, yy + .5, color="#00a651", alpha=.13, zorder=0)
