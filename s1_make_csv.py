@@ -71,5 +71,6 @@ def write_to_csv(matrix, propellant_name):
 
 if __name__ == "__main__":
     matrix = analyze_propellants_matrix()
-    write_to_csv(matrix, "LOX/LH2") # sample
+    for name in TrueConst.PROPELLANT_NAMES:
+        write_to_csv(matrix, name)
     print(matrix)
