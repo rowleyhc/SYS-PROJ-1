@@ -28,7 +28,7 @@ PROPS = {
     "LOX/LCH4": TrueConst.LOX_LCH4,
     "LOX/LH2": TrueConst.LOX_LH2,
     "LOX/RP1": TrueConst.LOX_RP1,
-    "Solid": TrueConst.SOLID,
+    "SOLID": TrueConst.SOLID,
     "N2O4/UDMH": TrueConst.N204_UDMH,
 }
 
@@ -164,33 +164,22 @@ def report(t: dict) -> None:
               f"LV mass = {t['m_gross'][i]:.1f} t, program cost = ${t['cost'][i]:.2f}B")
 
 
-def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="section 1 trend grapher")
-    parser.add_argument("stage1", choices=list(PROPS), help="first stage propellant")
-    parser.add_argument("stage2", choices=list(PROPS), help="second stage propellant")
-    parser.add_argument("--out", default="figs", help="folder for the saved figures")
-    parser.add_argument("--dv-step", type=float, default=DV_STEP, help="sweep step, m/s")
-    parser.add_argument("--no-show", dest="show", action="store_false", help="do not open a window")
-    return parser.parse_args(argv)
 
+if __name__ == "__main__":
+    stage1 = "LOX/LCH4" # change to your propellants here
+    stage2 = "SOLID"
+    out = "figs/"
+    show = False # if you want to see the figures
 
-def main(argv: list[str] | None = None) -> int:
-    args = parse_args(argv)
-    t = trends(args.stage1, args.stage2, args.dv_step)
+    t = trends(stage1, stage2, DV_STEP)
 
-    os.makedirs(args.out, exist_ok=True)
-    tag = f"{args.stage1}__{args.stage2}".replace("/", "_")
-    plot_mass(t, os.path.join(args.out, tag + "_mass_trends.png"))
-    plot_cost(t, os.path.join(args.out, tag + "_cost_trends.png"))
+    os.makedirs(out, exist_ok=True)
+    tag = f"{stage1}__{stage2}".replace("/", "_")
+    plot_mass(t, os.path.join(out, tag + "_mass_trends.png"))
+    plot_cost(t, os.path.join(out, tag + "_cost_trends.png"))
     report(t)
 
-    # show both figures together, otherwise show() would block on the first one
-    if args.show:
+    if show:
         plt.show()
     else:
         plt.close("all")
-    return 0
-
-
-if __name__ == "__main__":
-    sys.exit(main())

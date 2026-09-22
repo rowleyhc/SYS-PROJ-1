@@ -99,7 +99,7 @@ L_D = 13
 thrust_weight_ratio_stage_1_min = 1.3
 thrust_weight_ratio_stage_n_min = 0.76
 stage_count_min = 2
-g0 = 9.81
+g0 = 9.8
 
 LH2_rho_kg_m3 = 71
 LOX_rho_kg_m3 = 1140
