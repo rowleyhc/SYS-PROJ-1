@@ -5,15 +5,16 @@
 
 import math
 from s1_sweep import sweep_delta_v
+import TrueConst
 
 def min_mass_finder(
         propellant1: dict,
         propellant2: dict,
-        delta_v_total:float,
-        delta_v1_min: float,
-        m_pl: float,
-        g0: float,
-        dv_step: float
+        delta_v_total:float = TrueConst.mission_delV_ms,
+        delta_v1_min: float = 100,
+        m_pl: float = TrueConst.pyld_mass_kg,
+        g0: float = TrueConst.G0,
+        dv_step: float = 5
 ):
 
     all_results = sweep_delta_v( #sweep across all delta_v for specified prop combo
