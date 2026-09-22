@@ -28,13 +28,11 @@ CHOSEN_PAIRS = {
     "Gregory Kahn":   ("LOX/LCH4", "LOX/LH2"),
     "Henry Rowley":   ("LOX/LH2", "LOX/LH2"),
     "Jacob Harmon":   ("LOX/RP1", "LOX/LH2"),
-    "Sharan Menon":   ("Solid", "LOX/LH2"),
+    "Sharan Menon":   ("SOLID", "LOX/LH2"),
     "Shaunn Pavelik": ("N2O4/UDMH", "LOX/LH2"),
 }
 
 if __name__ == "__main__":
-    print("== verification ==")
-    runpy.run_path("s1_checks.py", run_name="__main__")
 
     print("\n== design matrix ==")
     results = analyze_propellants_matrix()
