@@ -1,5 +1,6 @@
 # Author: Jacob Harmon
 # Date: 9/16/2026
+# Update: 9/22/2026 - Jacob Harmon
 
 # List of true constants for propelant mixures
 
@@ -69,7 +70,7 @@ SOLID = {
 }
 
 # N204:UDMH
-N204_UDMH = {
+N2O4_UDMH = {
    "fuel_mass_ratio": "2.67:1",
     "inert_mass_fraction": 0.061,
     "isp_sea_level_s": 285,
@@ -84,11 +85,12 @@ N204_UDMH = {
     "expansion_ratio_2nd_stage": 81.3, 
 }
 
-mission_delV_ms = 12300
+
+mission_delV_ms = 12300 
 pyld_mass_kg = 26000
 fairing = {
     'fairing_height_m': 13,
-    'fairing_diameter_m': 5.2,    
+    'fairing_diameter_m3': 5.2,    
 }
 L_D = 13
 thrust_weight_ratio_stage_1_min = 1.3
@@ -103,6 +105,9 @@ SOLID_rho_kg_m3 = 1680
 N2O4_rho_kg_m3 = 1442
 UDMH_rho_kg_m3 = 791
 
+G0 = 9.8
+
 PROPELLANTS = [LOX_LCH4, LOX_LH2, LOX_RP1, SOLID, N204_UDMH]
 PROPELLANT_NAMES = ["LOX/LCH4", "LOX/LH2", "LOX/RP1", "SOLID", "N204/UDMH"]
+PROPS = dict(zip(PROPELLANT_NAMES, PROPELLANTS))
 
