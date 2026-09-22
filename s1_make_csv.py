@@ -48,7 +48,7 @@ def write_to_csv(matrix, propellant_name):
     """
     # write a single propellant's results to a csv file, for individual analysis use 
     second_stage_propellant = matrix[propellant_name] # 2nd stage propellant
-    with open(f"{propellant_name.replace('/', '_')}.csv", "w", newline="", encoding="utf-8") as file:
+    with open(f"csvs/{propellant_name.replace('/', '_')}.csv", "w", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
         writer.writerow(['First Stage Propellant'] + [propellant_name for i in range(5)])
         writer.writerow(['Second Stage Propellant'] + TrueConst.PROPELLANT_NAMES)
@@ -70,6 +70,8 @@ def write_to_csv(matrix, propellant_name):
             writer.writerow(row_data)  
 
 if __name__ == "__main__":
+    if not os.path.exists('csvs'):
+        os.mkdir('csvs')
     matrix = analyze_propellants_matrix()
     for name in TrueConst.PROPELLANT_NAMES:
         write_to_csv(matrix, name)

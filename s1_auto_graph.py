@@ -86,18 +86,10 @@ def _setup(t: dict) -> tuple[Figure, Axes]:
     })
 
     fig, ax = plt.subplots()
-    ax.set_xlim(0, 1)
+    lo, hi = t["frac"][t["ok"]].min(), t["frac"][t["ok"]].max()
+    ax.set_xlim(lo, hi)
     ax.set_xlabel("First stage delta-V fraction,  $\\Delta V_1 / \\Delta V_{total}$")
     ax.grid(alpha=0.35, ls="--")
-
-    # shade the splits where one of the stages cannot close
-    lo, hi = t["frac"][t["ok"]].min(), t["frac"][t["ok"]].max()
-    if lo > 0:
-        ax.axvspan(0, lo, color="grey", alpha=0.15)
-    if hi < 1:
-        ax.axvspan(hi, 1, color="grey", alpha=0.15)
-    ax.axvline(lo, color="grey", ls=":")
-    ax.axvline(hi, color="grey", ls=":")
     return fig, ax
 
 
@@ -166,8 +158,8 @@ def report(t: dict) -> None:
 
 
 if __name__ == "__main__":
-    stage1 = "LOX/LCH4" # change to your propellants here
-    stage2 = "SOLID"
+    stage1 = "SOLID" # change to your propellants here
+    stage2 = "LOX/LH2"
     out = "figs/"
     show = False # if you want to see the figures
 
