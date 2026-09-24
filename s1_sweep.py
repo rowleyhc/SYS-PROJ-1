@@ -4,23 +4,23 @@
 
 import math
 
-from s1_1 import calculate_stage_masses
+from s1_1 import calculate_stage_masses # imports definitions to calculate mass
 
 
-def sweep_delta_v(
+def sweep_delta_v(               # takes in each given prop parameter
     propellant1: dict,
     propellant2: dict,
-    delta_v_total: float,
-    delta_v1_min: float,
-    m_pl: float,
-    g0: float,
-    dv_step: float
+    delta_v_total: float,        # required total delV
+    delta_v1_min: float,         # where we set the minimum delV that the first stage can have
+    m_pl: float,                 # payload mass
+    g0: float,    
+    dv_step: float               # designated delV step
 ):
 
-    results = []
-    dv1 = delta_v1_min
+    results = []                                            # make the results array
+    dv1 = delta_v1_min                                      # sets the first stage dV and adds 1 each loop until total dV
     while(dv1 < delta_v_total):
-        sweep = calculate_stage_masses(
+        sweep = calculate_stage_masses(                     # calls to get the masses for each dV step
             dV_1=dv1,
             delta_1=propellant1["inert_mass_fraction"],
             delta_2=propellant2["inert_mass_fraction"],
@@ -31,7 +31,7 @@ def sweep_delta_v(
             g_0=g0,
         )
 
-        data = {
+        data = {                                            # compiles the data array for that dV composed of the masses
             "delta_v_1": dv1,
             "delta_v_2": delta_v_total - dv1,
             "m_0": sweep["m_0"],
@@ -46,7 +46,7 @@ def sweep_delta_v(
         results.append(data)
         dv1 += dv_step
 
-    return results
+    return results                                          # returns the results
  
 
 
