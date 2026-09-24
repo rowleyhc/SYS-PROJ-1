@@ -42,7 +42,7 @@ def trends(stage1: str, stage2: str, dv_step: float = DV_STEP) -> dict:
     m_in2 = np.array([r["m_in_2"] for r in rows])
     m_gross = np.array([r["m_0"] for r in rows]) / 1e3              # tonnes
     m_stage1 = np.array([r["m_in_1"] + r["m_pr_1"] for r in rows]) / 1e3
-    m_stage2 = np.array([r["m_0_2"] for r in rows]) / 1e3           # above stage 1, so + payload
+    m_stage2 = np.array([r["m_in_2"] + r["m_pr_2"] for r in rows]) / 1e3           # above stage 1, so + payload
     cost1 = stage_cost(m_in1) / 1e3                                 # $B 2025
     cost2 = stage_cost(m_in2) / 1e3
     cost = cost1 + cost2
@@ -113,7 +113,7 @@ def plot_mass(t: dict, path: str | None = None) -> Figure:
 
     # curves near the feasibility edge blow up, so cut them off at the cap
     for curve, colour, label in ((t["m_stage1"], "tab:blue", "Stage 1 mass"),
-                                 (t["m_stage2"], "tab:orange", "Stage 2 mass (incl. payload)"),
+                                 (t["m_stage2"], "tab:orange", "Stage 2 mass"),
                                  (t["m_gross"], "black", "Gross LV mass (incl. payload)")):
         ax.plot(t["frac"], np.where(curve <= cap, curve, np.nan), color=colour, label=label)
 
