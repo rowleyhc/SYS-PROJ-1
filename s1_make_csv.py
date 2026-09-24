@@ -6,17 +6,6 @@ import csv
 import numpy as np
 import os
 import math
-ROW_NAMES = [
-        'Minimum LV gross mass soln. (t)',
-        'Min. LV mass soln. stage 1 ΔV1 (m/s)',
-        'Min. LV mass soln. stage 1 ΔV fraction (-)',
-        'Min. LV mass program cost ($B2025)',
-        'Min. program cost soln. ($B2025)',
-        'Min. program cost soln. stage 1 ΔV1 (m/s)',
-        'Min. program cost soln. stage 1 ΔV fraction (-)',
-        'Min. program cost soln. gross mass (t)',
-    ]
-
 
 ## quick significant figures function
 SIG_FIGS = 4
@@ -33,9 +22,9 @@ def sf(x, n=SIG_FIGS):
 # Function to run the analysis for all propellants against each other, runs all 25 combinations
 def analyze_propellants_matrix():
     results = {}
-    for i,p1 in enumerate(TrueConst.PROPELLANTS): # 1st stage
+    for i,p1 in enumerate(TrueConst.PROPELLANTS): #1st stage
         propellant_results = []
-        for j,p2 in enumerate(TrueConst.PROPELLANTS): # 2nd stage
+        for j,p2 in enumerate(TrueConst.PROPELLANTS): #2nd Stage
             optimized_mass = min_mass_finder(p1, p2, TrueConst.mission_delV_ms, 100, TrueConst.pyld_mass_kg, g0=9.8, dv_step=1)
             optimized_cost = min_cost_finder(p1, p2, TrueConst.mission_delV_ms, 100, TrueConst.pyld_mass_kg, g0=9.8, dv_step=1)
             ## mass solution
@@ -77,28 +66,73 @@ def write_to_csv(matrix, propellant_name):
         writer = csv.writer(file)
         writer.writerow(['First Stage Propellant'] + [propellant_name for i in range(5)])
         writer.writerow(['Second Stage Propellant'] + TrueConst.PROPELLANT_NAMES)
-        for i, row, in enumerate(ROW_NAMES):
+        row_names = [
+            'Minimum LV gross mass soln. (t)',
+            'Min. LV mass soln. stage 1 ΔV1 (m/s)',
+            'Min. LV mass soln. stage 1 ΔV fraction (-)',
+            'Min. LV mass program cost ($B2025)',
+            'Min. program cost soln. ($B2025)',
+            'Min. program cost soln. stage 1 ΔV1 (m/s)',
+            'Min. program cost soln. stage 1 ΔV fraction (-)',
+            'Min. program cost soln. gross mass (t)',
+
+        ]
+        for i, row, in enumerate(row_names):
             row_data = [row]
             for propellant in second_stage_propellant:
-                row_data.append(sf(propellant[i + 1], 2))
+                row_data.append(sf(propellant[i + 1]))
             writer.writerow(row_data)  
     return path
 
 
-# AUTHOR: JACOB HARMON
+# Author: Jacob Harmon
 def write_full_matrix_csv(matrix, path="csvs/all_combinations.csv"):
-    """
-    Writes every (first stage, second stage) combination from the matrix
-    into a single flat csv, one row per pair.
-    """
+    
     os.makedirs("csvs", exist_ok=True)
+
+    row_names = [
+        'Minimum LV gross mass soln. (t)',
+        'Min. LV mass soln. stage 1 ΔV1 (m/s)',
+        'Min. LV mass soln. stage 1 ΔV fraction (-)',
+        'Min. LV mass program cost ($B2025)',
+        'Min. program cost soln. ($B2025)',
+        'Min. program cost soln. stage 1 ΔV1 (m/s)',
+        'Min. program cost soln. stage 1 ΔV fraction (-)',
+        'Min. program cost soln. gross mass (t)',
+    ]
+
     with open(path, "w", newline="", encoding="utf-8") as file:
+
         writer = csv.writer(file)
-        writer.writerow(['First Stage Propellant', 'Second Stage Propellant'] + ROW_NAMES)
-        for second_stage, rows in matrix.items():
-            for row in rows:
-                first_stage = row[0]
-                writer.writerow([first_stage, second_stage] + [sf(v) for v in row[1:]])
+
+        # Go through each first-stage propellant
+        for first_stage in TrueConst.PROPELLANT_NAMES:
+
+            stage_results = matrix[first_stage]
+
+            # Creates header
+            writer.writerow(
+                ['First Stage Propellant']
+                + [first_stage for i in range(5)]
+            )
+
+            writer.writerow(
+                ['Second Stage Propellant']
+                + TrueConst.PROPELLANT_NAMES
+            )
+
+            
+            for i, row_name in enumerate(row_names):
+
+                row_data = [row_name]
+
+                for result in stage_results:
+                    row_data.append(sf(result[i + 1]))
+
+                writer.writerow(row_data)
+
+            writer.writerow([])
+
     return path
 
 if __name__ == "__main__":
