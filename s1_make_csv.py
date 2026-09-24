@@ -5,6 +5,18 @@ from s1_3_cost import stage_cost
 import csv
 import numpy as np
 import os
+import math
+
+## quick significant figures function
+SIG_FIGS = 3
+def sf(x, n=SIG_FIGS):
+    """Round x to n significant figures and return it as a string with
+    thousands separators, e.g. sf(1852.5) -> '1,850', sf(0.30488) -> '0.305'."""
+    if x == 0 or not math.isfinite(x):
+        return str(x)
+    digits = n - int(math.floor(math.log10(abs(x)))) - 1
+    r = round(x, digits)
+    return f"{r:,.{max(digits, 0)}f}"
 
 # AUTHOR: SHARAN SAJIV MENON
 # Function to run the analysis for all propellants against each other, runs all 25 combinations
@@ -68,7 +80,7 @@ def write_to_csv(matrix, propellant_name):
         for i, row, in enumerate(row_names):
             row_data = [row]
             for propellant in second_stage_propellant:
-                row_data.append(round(propellant[i + 1], 2))
+                row_data.append(sf(propellant[i + 1]))
             writer.writerow(row_data)  
     return path
 
