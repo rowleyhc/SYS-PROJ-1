@@ -17,11 +17,11 @@ import TrueConst
 from s1_sweep import sweep_delta_v
 from s1_3_cost import stage_cost
 
-DV_TOTAL = 12300.0      # m/s    M1
-PAYLOAD = 26000.0       # kg     M2
-G0 = 9.8                # m/s^2
-DV1_MIN = 100.0         # m/s
-DV_STEP = 10.0          # m/s
+DV_TOTAL = TrueConst.mission_delV_ms      # m/s    M1
+PAYLOAD = TrueConst.pyld_mass_kg       # kg     M2
+G0 = TrueConst.G0               # m/s^2
+DV1_MIN = 100         # m/s
+DV_STEP = 1.0       # m/s
 YLIM_FACTOR = 3.0       # y axis cap = factor * optimum
 
 PROPS = {
