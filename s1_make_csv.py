@@ -6,6 +6,17 @@ import csv
 import numpy as np
 import os
 import math
+ROW_NAMES = [
+        'Minimum LV gross mass soln. (t)',
+        'Min. LV mass soln. stage 1 ΔV1 (m/s)',
+        'Min. LV mass soln. stage 1 ΔV fraction (-)',
+        'Min. LV mass program cost ($B2025)',
+        'Min. program cost soln. ($B2025)',
+        'Min. program cost soln. stage 1 ΔV1 (m/s)',
+        'Min. program cost soln. stage 1 ΔV fraction (-)',
+        'Min. program cost soln. gross mass (t)',
+    ]
+
 
 ## quick significant figures function
 SIG_FIGS = 4
@@ -66,18 +77,7 @@ def write_to_csv(matrix, propellant_name):
         writer = csv.writer(file)
         writer.writerow(['First Stage Propellant'] + [propellant_name for i in range(5)])
         writer.writerow(['Second Stage Propellant'] + TrueConst.PROPELLANT_NAMES)
-        row_names = [
-            'Minimum LV gross mass soln. (t)',
-            'Min. LV mass soln. stage 1 ΔV1 (m/s)',
-            'Min. LV mass soln. stage 1 ΔV fraction (-)',
-            'Min. LV mass program cost ($B2025)',
-            'Min. program cost soln. ($B2025)',
-            'Min. program cost soln. stage 1 ΔV1 (m/s)',
-            'Min. program cost soln. stage 1 ΔV fraction (-)',
-            'Min. program cost soln. gross mass (t)',
-
-        ]
-        for i, row, in enumerate(row_names):
+        for i, row, in enumerate(ROW_NAMES):
             row_data = [row]
             for propellant in second_stage_propellant:
                 row_data.append(sf(propellant[i + 1], 2))
@@ -85,26 +85,16 @@ def write_to_csv(matrix, propellant_name):
     return path
 
 
-# Author: Jacob Harmon
+# AUTHOR: JACOB HARMON
 def write_full_matrix_csv(matrix, path="csvs/all_combinations.csv"):
     """
     Writes every (first stage, second stage) combination from the matrix
     into a single flat csv, one row per pair.
     """
     os.makedirs("csvs", exist_ok=True)
-    row_names = [
-        'Minimum LV gross mass soln. (t)',
-        'Min. LV mass soln. stage 1 ΔV1 (m/s)',
-        'Min. LV mass soln. stage 1 ΔV fraction (-)',
-        'Min. LV mass program cost ($B2025)',
-        'Min. program cost soln. ($B2025)',
-        'Min. program cost soln. stage 1 ΔV1 (m/s)',
-        'Min. program cost soln. stage 1 ΔV fraction (-)',
-        'Min. program cost soln. gross mass (t)',
-    ]
     with open(path, "w", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
-        writer.writerow(['First Stage Propellant', 'Second Stage Propellant'] + row_names)
+        writer.writerow(['First Stage Propellant', 'Second Stage Propellant'] + ROW_NAMES)
         for second_stage, rows in matrix.items():
             for row in rows:
                 first_stage = row[0]
