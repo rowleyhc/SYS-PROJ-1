@@ -8,7 +8,7 @@ import os
 import math
 
 ## quick significant figures function
-SIG_FIGS = 3
+SIG_FIGS = 4
 def sf(x, n=SIG_FIGS):
     """Round x to n significant figures and return it as a string with
     thousands separators, e.g. sf(1852.5) -> '1,850', sf(0.30488) -> '0.305'."""
@@ -84,6 +84,32 @@ def write_to_csv(matrix, propellant_name):
             writer.writerow(row_data)  
     return path
 
+
+# Author: Jacob Harmon
+def write_full_matrix_csv(matrix, path="csvs/all_combinations.csv"):
+    """
+    Writes every (first stage, second stage) combination from the matrix
+    into a single flat csv, one row per pair.
+    """
+    os.makedirs("csvs", exist_ok=True)
+    row_names = [
+        'Minimum LV gross mass soln. (t)',
+        'Min. LV mass soln. stage 1 ΔV1 (m/s)',
+        'Min. LV mass soln. stage 1 ΔV fraction (-)',
+        'Min. LV mass program cost ($B2025)',
+        'Min. program cost soln. ($B2025)',
+        'Min. program cost soln. stage 1 ΔV1 (m/s)',
+        'Min. program cost soln. stage 1 ΔV fraction (-)',
+        'Min. program cost soln. gross mass (t)',
+    ]
+    with open(path, "w", newline="", encoding="utf-8") as file:
+        writer = csv.writer(file)
+        writer.writerow(['First Stage Propellant', 'Second Stage Propellant'] + row_names)
+        for second_stage, rows in matrix.items():
+            for row in rows:
+                first_stage = row[0]
+                writer.writerow([first_stage, second_stage] + [sf(v) for v in row[1:]])
+    return path
 
 if __name__ == "__main__":
     if not os.path.exists('csvs'):
