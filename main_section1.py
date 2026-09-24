@@ -5,13 +5,12 @@ Author: Shaunn Pavelik (9/21/2026)
 
     python main_section1.py
 
-1. runs the verification checks (s1_checks.py)
-2. solves the full 5x5 matrix, writes results/ CSVs (S.1.2.b, S.1.3.b, S.1.5)
-3. draws each teammate's S.1.2.a / S.1.3.a graphs for their chosen pair
-4. draws the two group S.1.5 graphics
+1. solves the full 5x5 matrix, writes csvs/ CSVs (S.1.2.b, S.1.3.b, S.1.5)
+2. draws each teammate's S.1.2.a / S.1.3.a graphs for their chosen pair
+3. draws the two group S.1.5 graphics
 Everything uses the shared settings in TrueConst (G0, DV_STEP, DV1_MIN).
 """
-import runpy
+import os
 
 import matplotlib
 matplotlib.use("Agg")
@@ -20,7 +19,7 @@ import matplotlib.pyplot as plt
 import TrueConst
 import s1_auto_graph as graph
 import s1_5_trade_study as study
-from s1_make_csv import analyze_propellants_matrix, write_to_csv, write_all_csv
+from s1_make_csv import analyze_propellants_matrix, write_to_csv
 
 # (stage 1, stage 2) each teammate plots for S.1.2.a / S.1.3.a.
 # Stage 1 must be the teammate's own Table 4 column -- edit the second stage freely.
@@ -32,13 +31,31 @@ CHOSEN_PAIRS = {
     "Shaunn Pavelik": ("N2O4/UDMH", "LOX/LH2"),
 }
 
+def as_designs(matrix):
+    """analyze_propellants_matrix() returns one row per pair, while s1_5_trade_study
+    reads matrix[first][second][design][key]. Convert between the two shapes here
+    rather than duplicating the trade study."""
+    out = {}
+    for first, rows in matrix.items():
+        out[first] = {}
+        for row in rows:
+            out[first][row[0]] = {
+                "mass": {"m0_t": row[1], "dv1_kms": row[2] / 1e3,
+                         "dv1_frac": row[3], "cost_B": row[4]},
+                "cost": {"m0_t": row[8], "dv1_kms": row[6] / 1e3,
+                         "dv1_frac": row[7], "cost_B": row[5]},
+            }
+    return out
+
+
 if __name__ == "__main__":
+
+    os.makedirs("figs", exist_ok=True)
 
     print("\n== design matrix ==")
     results = analyze_propellants_matrix()
     for name in TrueConst.PROPELLANT_NAMES:
         print("wrote", write_to_csv(results, name))
-    print("wrote", write_all_csv(results))
 
     print("\n== individual trend graphs ==")
     for who, (s1, s2) in CHOSEN_PAIRS.items():
@@ -50,6 +67,7 @@ if __name__ == "__main__":
         print(f"{who}: {tag}")
 
     print("\n== group S.1.5 graphics ==")
-    study.heatmaps(results, "figs/S1_5_graphic1_heatmaps.png")
-    study.ranked_designs(results, "figs/S1_5_graphic2_ranked_designs.png")
-    print("done -- see results/ and figs/")
+    designs = as_designs(results)
+    study.heatmaps(designs, "figs/S1_5_graphic1_heatmaps.png")
+    study.ranked_designs(designs, "figs/S1_5_graphic2_ranked_designs.png")
+    print("done -- see csvs/ and figs/")

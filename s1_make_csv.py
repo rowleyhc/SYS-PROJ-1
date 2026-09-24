@@ -46,7 +46,8 @@ def write_to_csv(matrix, propellant_name):
     Creates a matrix for a single 2nd stage propellant and writes it to a csv.
 
     """
-    # write a single propellant's results to a csv file, for individual analysis use 
+    # write a single propellant's results to a csv file, for individual analysis use
+    os.makedirs("csvs", exist_ok=True)
     second_stage_propellant = matrix[propellant_name] # 2nd stage propellant
     with open(f"csvs/{propellant_name.replace('/', '_')}.csv", "w", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
