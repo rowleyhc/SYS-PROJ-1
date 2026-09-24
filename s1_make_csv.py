@@ -80,7 +80,7 @@ def write_to_csv(matrix, propellant_name):
         for i, row, in enumerate(row_names):
             row_data = [row]
             for propellant in second_stage_propellant:
-                row_data.append(sf(propellant[i + 1]))
+                row_data.append(sf(propellant[i + 1], 2))
             writer.writerow(row_data)  
     return path
 
