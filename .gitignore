@@ -2,3 +2,4 @@ __pycache__/
 .DS_Store
 figs/
 csvs/
+optimal_results.txt

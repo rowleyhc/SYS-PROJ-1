@@ -33,9 +33,9 @@ def sf(x, n=SIG_FIGS):
 # Function to run the analysis for all propellants against each other, runs all 25 combinations
 def analyze_propellants_matrix():
     results = {}
-    for i,p1 in enumerate(TrueConst.PROPELLANTS): # 2nd stage?
+    for i,p1 in enumerate(TrueConst.PROPELLANTS): # 1st stage
         propellant_results = []
-        for j,p2 in enumerate(TrueConst.PROPELLANTS): # 1st stage?
+        for j,p2 in enumerate(TrueConst.PROPELLANTS): # 2nd stage
             optimized_mass = min_mass_finder(p1, p2, TrueConst.mission_delV_ms, 100, TrueConst.pyld_mass_kg, g0=9.8, dv_step=1)
             optimized_cost = min_cost_finder(p1, p2, TrueConst.mission_delV_ms, 100, TrueConst.pyld_mass_kg, g0=9.8, dv_step=1)
             ## mass solution
