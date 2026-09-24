@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 import TrueConst
 import s1_auto_graph as graph
 import s1_5_trade_study as study
-from s1_make_csv import analyze_propellants_matrix, write_to_csv
+from s1_make_csv import analyze_propellants_matrix, write_to_csv, write_full_matrix_csv
 
 # (stage 1, stage 2) each teammate plots for S.1.2.a / S.1.3.a
 CHOSEN_PAIRS = {
@@ -55,6 +55,7 @@ if __name__ == "__main__":
     results = analyze_propellants_matrix()
     for name in TrueConst.PROPELLANT_NAMES:
         print("wrote", write_to_csv(results, name))
+    print("wrote", write_full_matrix_csv(results))
 
     print("\n== individual trend graphs ==")
     for who, (s1, s2) in CHOSEN_PAIRS.items():
@@ -70,11 +71,3 @@ if __name__ == "__main__":
     study.heatmaps(designs, "figs/S1_5_graphic1_heatmaps.png")
     study.ranked_designs(designs, "figs/S1_5_graphic2_ranked_designs.png")
     print("done -- see csvs/ and figs/")
-
-    # Author Jacob Harmon
-    # 9/24/2026
-    print("\n== design matrix ==")
-    results = analyze_propellants_matrix()
-    for name in TrueConst.PROPELLANT_NAMES:
-        print("wrote", write_to_csv(results, name))
-    print("wrote", write_full_matrix_csv(results))
