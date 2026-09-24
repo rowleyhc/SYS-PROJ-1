@@ -1,15 +1,5 @@
 """
-s1_5_trade_study.py -- Section 1.5 group graphics for the full 5x5 design matrix.
-
-Author: Shaunn Pavelik (9/21/2026)
-
-Graphic 1: side-by-side heat maps (Table 4 layout: columns = first stage,
-           rows = second stage) of the minimum gross mass and minimum NRE cost.
-Graphic 2: all 25 pairs ranked by minimum gross mass, with the program cost of
-           the min-mass and min-cost designs beside each bar; coloured by
-           second-stage propellant, top designs highlighted.
-Also prints a ranked list and a rough first look at Section 2 drivers
-(stage-1 engine count for T/W >= 1.3, stage-1 propellant volume).
+Author: Shaunn Pavelik (9/21/2026), Jacob Harmon (9/26/2026)
 """
 import os
 
@@ -83,54 +73,181 @@ def heatmaps(results, path):
     plt.close(fig)
 
 
+# Author Jacob Harmon
 def ranked_designs(results, path):
-    """Graphic 2 -- all 25 pairs ranked by minimum gross mass; left panel = gross
-    mass of the min-mass design, right panel = program cost of both designs.
-    Bars are coloured by second-stage propellant; top designs highlighted."""
+
+
+
     _style()
-    order = ranked(results)                       # best (lightest) first
-    labels = [f"{n1}  /  {n2}" for n1, n2, _ in order]
-    y = np.arange(len(order))[::-1]               # best at the top
-    fig, (axm, axc) = plt.subplots(1, 2, figsize=(18, 11.5), sharey=True,
-                                   gridspec_kw={"width_ratios": [1.35, 1], "wspace": 0.05})
-    for yy, (n1, n2, m0) in zip(y, order):
-        col = SECOND_COLORS[n2]
-        axm.barh(yy, m0, color=col, edgecolor="black", lw=.6)
-        axm.text(m0 * 1.06, yy, round(m0, 2), va="center", fontsize=12)
-        cm = results[n1][n2]["mass"]["cost_B"]
-        cc = results[n1][n2]["cost"]["cost_B"]
-        axc.plot([cc, cm], [yy, yy], color=col, lw=2)
-        axc.plot(cm, yy, "o", ms=10, color=col, mec="black")
-        axc.plot(cc, yy, "D", ms=9, mfc="white", mec=col, mew=2.2)
-        axc.text(max(cc, cm) * 1.07, yy, round(cc, 2), va="center", fontsize=12)
-    for yy in y[:N_TOP]:
-        for ax in (axm, axc):
-            ax.axhspan(yy - .5, yy + .5, color="#00a651", alpha=.13, zorder=0)
-    axm.set_yticks(y, labels, fontsize=13)
-    for k in range(N_TOP):
-        axm.get_yticklabels()[k].set_fontweight("bold")
-        axm.get_yticklabels()[k].set_color("#007a3d")
-    axm.set_xscale("log")
-    axm.set_xlim(1e3, 5e5)
-    axm.set_xlabel("Min-mass design gross LV mass (t)  [log]")
-    axm.set_ylabel("Stage 1  /  Stage 2 propellant")
-    axc.set_xscale("log")
-    axc.set_xlim(8, 200)
-    axc.set_xlabel("Program NRE cost ($B2025)  [log]")
-    for ax in (axm, axc):
-        ax.grid(axis="x", which="both", alpha=.3, ls="--")
-        ax.set_ylim(-.6, len(order) - .4)
-    handles = [plt.Line2D([], [], marker="s", ls="", ms=13, color=c, label=f"Stage 2: {n}")
-               for n, c in SECOND_COLORS.items()]
-    handles += [plt.Line2D([], [], marker="o", ls="", ms=10, color="#888", mec="black",
-                           label="Cost of min-mass design"),
-                plt.Line2D([], [], marker="D", ls="", ms=9, mfc="white", mec="#555", mew=2.2,
-                           label="Min-cost design (value shown)"),
-                plt.Rectangle((0, 0), 1, 1, color="#00a651", alpha=.25, label="Top 3 designs")]
-    axc.legend(handles=handles, loc="upper right", fontsize=12, framealpha=.95)
-    fig.suptitle("All 25 designs ranked by minimum gross mass -- every top design uses a LOX/LH2 upper stage",
-                 fontsize=19, fontweight="bold", y=.94)
-    fig.savefig(path)
+    # Top 10 by minimum mass
+    top_mass = ranked(results, "mass", "m0_t")[:10]
+    # Top 10 by minimum cost
+    top_cost = ranked(results, "cost", "cost_B")[:10]
+    fig, axes = plt.subplots(1, 2, figsize=(18, 10))
+    fig.subplots_adjust(
+        left=0.16,
+        right=0.97,
+        top=0.88,
+        bottom=0.10,
+        wspace=0.42
+    )
+
+    ax = axes[0]
+    y = np.arange(len(top_mass))
+
+    masses = []
+    labels = []
+
+    for i in range(len(top_mass)):
+
+        n1 = top_mass[i][0]
+        n2 = top_mass[i][1]
+        m0 = top_mass[i][2]
+        cost = results[n1][n2]["mass"]["cost_B"]
+
+        masses.append(m0)
+        labels.append(f"#{i+1}   {n1} / {n2}")
+
+        if i < 3:
+            color = "#2a9d55"
+            edge = "#126b32"
+            lw = 2.2
+            weight = "bold"
+        else:
+            color = "#4472C4"
+            edge = "black"
+            lw = 0.8
+            weight = "normal"
+
+        ax.barh(
+            i,
+            m0,
+            color=color,
+            edgecolor=edge,
+            linewidth=lw,
+            height=0.72
+        )
+
+        ax.text(
+            m0 * 1.05,
+            i,
+            f"{m0:,.0f} t   |   ${cost:.2f}B",
+            va="center",
+            ha="left",
+            fontsize=13,
+            fontweight=weight
+        )
+
+    ax.set_yticks(y)
+    ax.set_yticklabels(labels, fontsize=13)
+    ax.invert_yaxis()
+    for i in range(min(3, len(top_mass))):
+        tick = ax.get_yticklabels()[i]
+        tick.set_fontweight("bold")
+        tick.set_color("#126b32")
+    ax.set_xscale("log")
+    ax.set_xlim(min(masses) * 0.8, max(masses) * 2.2)
+    ax.grid(axis="x", which="both", linestyle="--", alpha=0.25)
+    ax.tick_params(axis="x", labelsize=12)
+    ax.tick_params(axis="y", length=0)
+    ax.set_title(
+        "Top 10 Minimum-Mass Designs",
+        fontsize=17,
+        fontweight="bold",
+        pad=10
+    )
+    ax.set_xlabel(
+        "Minimum Gross Launch Vehicle Mass (t)  [log scale]",
+        fontsize=14,
+        fontweight="bold"
+    )
+    ax.set_ylabel(
+        "Stage 1 / Stage 2 Propellant",
+        fontsize=14,
+        fontweight="bold"
+    )
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax = axes[1]
+
+    y = np.arange(len(top_cost))
+    costs = []
+    labels = []
+    for i in range(len(top_cost)):
+
+        n1 = top_cost[i][0]
+        n2 = top_cost[i][1]
+        cost = top_cost[i][2]
+        m0 = results[n1][n2]["cost"]["m0_t"]
+
+        costs.append(cost)
+        labels.append(f"#{i+1}   {n1} / {n2}")
+
+        if i < 3:
+            color = "#2a9d55"
+            edge = "#126b32"
+            lw = 2.2
+            weight = "bold"
+        else:
+            color = "#4472C4"
+            edge = "black"
+            lw = 0.8
+            weight = "normal"
+
+        ax.barh(
+            i,
+            cost,
+            color=color,
+            edgecolor=edge,
+            linewidth=lw,
+            height=0.72
+        )
+
+        ax.text(
+            cost * 1.05,
+            i,
+            f"${cost:.2f}B   |   {m0:,.0f} t",
+            va="center",
+            ha="left",
+            fontsize=13,
+            fontweight=weight
+        )
+
+    ax.set_yticks(y)
+    ax.set_yticklabels(labels, fontsize=13)
+    ax.invert_yaxis()
+    for i in range(min(3, len(top_cost))):
+        tick = ax.get_yticklabels()[i]
+        tick.set_fontweight("bold")
+        tick.set_color("#126b32")
+    ax.set_xscale("log")
+    ax.set_xlim(min(costs) * 0.8, max(costs) * 2.2)
+    ax.grid(axis="x", which="both", linestyle="--", alpha=0.25)
+    ax.tick_params(axis="x", labelsize=12)
+    ax.tick_params(axis="y", length=0)
+    ax.set_title(
+        "Top 10 Minimum-Cost Designs",
+        fontsize=17,
+        fontweight="bold",
+        pad=10
+    )
+    ax.set_xlabel(
+        "Minimum Program Cost ($B2025)  [log scale]",
+        fontsize=14,
+        fontweight="bold"
+    )
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+
+    # The title
+    fig.suptitle(
+        "Top Launch Vehicle Designs by Mass and Cost",
+        fontsize=22,
+        fontweight="bold",
+        y=0.95
+    )
+
+    fig.savefig(path, dpi=800, bbox_inches="tight")
     plt.close(fig)
 
 
