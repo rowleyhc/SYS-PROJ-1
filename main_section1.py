@@ -21,8 +21,7 @@ import s1_auto_graph as graph
 import s1_5_trade_study as study
 from s1_make_csv import analyze_propellants_matrix, write_to_csv
 
-# (stage 1, stage 2) each teammate plots for S.1.2.a / S.1.3.a.
-# Stage 1 must be the teammate's own Table 4 column -- edit the second stage freely.
+# (stage 1, stage 2) each teammate plots for S.1.2.a / S.1.3.a
 CHOSEN_PAIRS = {
     "Gregory Kahn":   ("LOX/LCH4", "LOX/LH2"),
     "Henry Rowley":   ("LOX/LH2", "LOX/LH2"),
@@ -71,3 +70,11 @@ if __name__ == "__main__":
     study.heatmaps(designs, "figs/S1_5_graphic1_heatmaps.png")
     study.ranked_designs(designs, "figs/S1_5_graphic2_ranked_designs.png")
     print("done -- see csvs/ and figs/")
+
+    # Author Jacob Harmon
+    # 9/24/2026
+    print("\n== design matrix ==")
+    results = analyze_propellants_matrix()
+    for name in TrueConst.PROPELLANT_NAMES:
+        print("wrote", write_to_csv(results, name))
+    print("wrote", write_full_matrix_csv(results))
