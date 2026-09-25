@@ -101,10 +101,9 @@ def _setup(t: dict) -> tuple[Figure, Axes]:
 
 
 def _mark(ax: Axes, x: float, y: float, label: str, colour: str) -> None:
-    # star on the optimum, named only. the value used to be printed here too but
-    # :,.0f turned $10.56B into "11", and the slide callout and the T.6 table carry it
+    # star on the optimum plus a callout with the value under it
     ax.plot(x, y, "*", ms=22, color=colour, mec="black", zorder=6, label=label)
-    ax.annotate(label, (x, y), xytext=(10, 14),
+    ax.annotate(f"{label}\n{y:,.0f} at {x:.3f}", (x, y), xytext=(10, 14),
                 textcoords="offset points", fontweight="bold", color=colour,
                 bbox=dict(boxstyle="round,pad=0.3", fc="white", ec=colour),
                 arrowprops=dict(arrowstyle="->", color=colour, lw=2), zorder=7)
