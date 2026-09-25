@@ -15,6 +15,7 @@ from matplotlib.figure import Figure
 import TrueConst
 from s1_sweep import sweep_delta_v
 from s1_3_cost import stage_cost
+from s1_make_csv import sf
 
 DV_TOTAL = TrueConst.mission_delV_ms      # m/s    M1
 PAYLOAD = TrueConst.pyld_mass_kg       # kg     M2
@@ -100,10 +101,11 @@ def _setup(t: dict) -> tuple[Figure, Axes]:
     return fig, ax
 
 
-def _mark(ax: Axes, x: float, y: float, label: str, colour: str) -> None:
-    # star on the optimum plus a callout with the value under it
+def _mark(ax: Axes, x: float, y: float, label: str, colour: str, value: str) -> None:
+    # star on the optimum plus a callout. value comes in already formatted with its unit,
+    # and the fraction goes through sf() so both match the 4 s.f. used in the tables
     ax.plot(x, y, "*", ms=22, color=colour, mec="black", zorder=6, label=label)
-    ax.annotate(f"{label}\n{y:,.0f} at {x:.3f}", (x, y), xytext=(10, 14),
+    ax.annotate(f"{label}\n{value} at {sf(x)}", (x, y), xytext=(10, 14),
                 textcoords="offset points", fontweight="bold", color=colour,
                 bbox=dict(boxstyle="round,pad=0.3", fc="white", ec=colour),
                 arrowprops=dict(arrowstyle="->", color=colour, lw=2), zorder=7)
@@ -127,7 +129,8 @@ def plot_mass(t: dict, path: str | None = None) -> Figure:
                                  (t["m_gross"], "black", "Gross LV mass (incl. payload)")):
         ax.plot(t["frac"], np.where(curve <= cap, curve, np.nan), color=colour, label=label)
 
-    _mark(ax, t["frac"][t["i_mass"]], t["m_gross"][t["i_mass"]], "Minimum gross mass", "red")
+    _mark(ax, t["frac"][t["i_mass"]], t["m_gross"][t["i_mass"]], "Minimum gross mass", "red",
+          value=f"{sf(t['m_gross'][t['i_mass']])} t")
     # dashed guide at the *other* optimum, used on the 1.4 slide
     ax.axvline(t["frac"][t["i_cost"]], color="purple", ls="--", lw=2,
                label="Min-cost $\\Delta V_1$ split")
@@ -151,7 +154,8 @@ def plot_cost(t: dict, path: str | None = None) -> Figure:
                                  (t["cost"], "black", "Total NRE cost")):
         ax.plot(t["frac"], np.where(curve <= cap, curve, np.nan), color=colour, label=label)
 
-    _mark(ax, t["frac"][t["i_cost"]], t["cost"][t["i_cost"]], "Minimum program cost", "blue")
+    _mark(ax, t["frac"][t["i_cost"]], t["cost"][t["i_cost"]], "Minimum program cost", "blue",
+          value=f"${sf(t['cost'][t['i_cost']])}B")
     ax.axvline(t["frac"][t["i_mass"]], color="purple", ls="--", lw=2,
                label="Min-mass $\\Delta V_1$ split")
 
