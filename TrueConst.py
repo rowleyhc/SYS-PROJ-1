@@ -111,7 +111,7 @@ PROPELLANTS = [LOX_LCH4, LOX_LH2, LOX_RP1, SOLID, N2O4_UDMH]
 PROPELLANT_NAMES = ["LOX/LCH4", "LOX/LH2", "LOX/RP1", "SOLID", "N2O4/UDMH"]
 PROPS = dict(zip(PROPELLANT_NAMES, PROPELLANTS))
 
-# which teammate owns which Table 4 column (first stage)
+
 COLUMN_OWNER = {
     "LOX/LCH4": "Gregory Kahn",
     "LOX/LH2": "Henry Rowley",
@@ -119,5 +119,5 @@ COLUMN_OWNER = {
     "SOLID": "Sharan Menon",
     "N2O4/UDMH": "Shaunn Pavelik",
 }
-N204_UDMH = N2O4_UDMH  # backwards-compatible alias: mix was renamed to N2O4_UDMH
+N204_UDMH = N2O4_UDMH  
 
