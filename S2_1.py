@@ -12,8 +12,8 @@
 
 import math
 
-import TrueConst
-from s1_1 import calculate_stage_masses
+import utils.TrueConst as TrueConst
+from s1.s1_1 import calculate_stage_masses
 
 
 # ============================================================
