@@ -81,17 +81,17 @@ PROPELLANT_INFO = {
 # 4. BASIC GEOMETRY FUNCTIONS
 # ============================================================
 
-def cylinder_length(volume, diameter):
+def cylinder_length(volume: float, diameter: float) -> float:
     """Length of a cylindrical tank: L = V / (pi * r^2)."""
     radius = diameter / 2
     return volume / (math.pi * radius**2)
 
 
-def cylinder_side_area(length, diameter):
+def cylinder_side_area(length: float, diameter: float) -> float:
     return math.pi * diameter * length
 
 
-def cone_side_area(radius, height):
+def cone_side_area(radius: float, height: float) -> float:
     slant_height = math.sqrt(radius**2 + height**2)
     return math.pi * radius * slant_height
 
