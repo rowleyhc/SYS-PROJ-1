@@ -52,17 +52,20 @@ PROPELLANT_INFO = {
     "LOX/LCH4": {
         "data": TrueConst.LOX_LCH4, "mixture_ratio": 3.6,
         "oxidizer_density": TrueConst.LOX_rho_kg_m3, "fuel_density": TrueConst.LCH4_rho_kg_m3,
-        "is_solid": False, "needs_insulation": True,
+        "is_solid": False, "needs_insulation": True
+        "tank_coeff_ox": 12.16, "tank_coeff_fuel": 12.16 
     },
     "LOX/LH2": {
         "data": TrueConst.LOX_LH2, "mixture_ratio": 6.03,
         "oxidizer_density": TrueConst.LOX_rho_kg_m3, "fuel_density": TrueConst.LH2_rho_kg_m3,
         "is_solid": False, "needs_insulation": True,
+        "tank_coeff_ox": 12.16, "tank_coeff_fuel": 9.09
     },
     "LOX/RP1": {
         "data": TrueConst.LOX_RP1, "mixture_ratio": 2.72,
         "oxidizer_density": TrueConst.LOX_rho_kg_m3, "fuel_density": TrueConst.RP1_rho_kg_m3,
         "is_solid": False, "needs_insulation": True,
+        "tank_coeff_ox": 12.16, "tank_coeff_fuel": 12.16
     },
     "SOLID": {
         "data": TrueConst.SOLID, "mixture_ratio": None,
@@ -73,6 +76,7 @@ PROPELLANT_INFO = {
         "data": TrueConst.N2O4_UDMH, "mixture_ratio": 2.67,
         "oxidizer_density": TrueConst.N2O4_rho_kg_m3, "fuel_density": TrueConst.UDMH_rho_kg_m3,
         "is_solid": False, "needs_insulation": False,
+        "tank_coeff_ox": 12.16, "tank_coeff_fuel": 12.16
     },
 }
 
@@ -182,9 +186,13 @@ def calculate_engine_count(stage_number, propellant_name, supported_mass):
 # Just replace the equations inside them.
 # ============================================================
 
-def mer_tank_mass(propellant_mass, tank_area):
-    """PLACEHOLDER: tank mass = 3% of propellant mass."""
-    return 0.03 * propellant_mass
+def mer_tank_mass(geometry, info):
+    if info["is_solid"]:
+        return 0
+        
+    ox_tank_mass = info["tank_coeff_ox"] * geometry["oxidizer_volume"]
+    fuel_tank_mass = info["tank_coeff_fuel"] * geometry["fuel_volume"]
+    return ox_tank_mass + fuel_tank_mass
 
 
 def mer_insulation_mass(tank_area, needs_insulation):
