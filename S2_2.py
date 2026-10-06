@@ -2,6 +2,7 @@
 import numpy as np
 from S2_1 import run_systems_analysis
 import utils.TrueConst as TrueConst
+from utils.sf import sf
 import csv
 import os
 
@@ -10,6 +11,7 @@ import os
 def stage_cost(stage_m_in: float):
     cost_nre = 13.52 * stage_m_in**0.55
     return cost_nre
+
 
 DELTA_V_1 = 6000.0  # m/s
 
@@ -20,8 +22,6 @@ def create_table_of_masses(results: dict):
     stage2 = results["stage_2"]
     stage1_masses = list(filter(lambda x: "mass" in x, list(stage1.keys())))
     stage2_masses = list(filter(lambda x: "mass" in x, list(stage2.keys())))
-    print(stage1_masses)
-    print(stage2_masses)
     ## calculate costs
     stage1_total_mass = stage1['stage_mass']
     stage2_total_mass = stage2['stage_mass']
@@ -36,13 +36,13 @@ def create_table_of_masses(results: dict):
         writer = csv.writer(file)
         writer.writerow(["Stage", "Component Name", "Mass (kg)"])
         for mass_name in stage1_masses:
-            writer.writerow(["Stage 1", mass_name.replace("_", " ").title(), stage1[mass_name]])
+            writer.writerow(["Stage 1", mass_name.replace("_", " ").title(), sf(stage1[mass_name])])
         for mass_name in stage2_masses:
-            writer.writerow(["Stage 2", mass_name.replace("_", " ").title(), stage2[mass_name]])
+            writer.writerow(["Stage 2", mass_name.replace("_", " ").title(), sf(stage2[mass_name])])
         writer.writerow(
-            ["LV", "Total Mass", stage1["stage_mass"] + stage2["stage_mass"]]
+            ["LV", "Total Mass", sf(stage1["stage_mass"] + stage2["stage_mass"])]
         )
-        writer.writerow(["LV", "Total Cost ($B2025)", total_cost/1e3])
+        writer.writerow(["LV", "Total Cost ($B2025)", sf(total_cost/1e3)])
     return path
 
 if __name__ == "__main__":
