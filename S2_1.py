@@ -52,7 +52,7 @@ PROPELLANT_INFO = {
     "LOX/LCH4": {
         "data": TrueConst.LOX_LCH4, "mixture_ratio": 3.6,
         "oxidizer_density": TrueConst.LOX_rho_kg_m3, "fuel_density": TrueConst.LCH4_rho_kg_m3,
-        "is_solid": False, "needs_insulation": True
+        "is_solid": False, "needs_insulation": True,
         "tank_coeff_ox": 12.16, "tank_coeff_fuel": 12.16 
     },
     "LOX/LH2": {
