@@ -52,19 +52,22 @@ PROPELLANT_INFO = {
     "LOX/LCH4": {
         "data": TrueConst.LOX_LCH4, "mixture_ratio": 3.6,
         "oxidizer_density": TrueConst.LOX_rho_kg_m3, "fuel_density": TrueConst.LCH4_rho_kg_m3,
-        "is_solid": False, "needs_insulation": True,
+        "is_solid": False, "needs_insulation": True, 
+        "ins_coeff_ox": 1.123, "ins_coeff_fuel": 1.123,
         "tank_coeff_ox": 12.16, "tank_coeff_fuel": 12.16 
     },
     "LOX/LH2": {
         "data": TrueConst.LOX_LH2, "mixture_ratio": 6.03,
         "oxidizer_density": TrueConst.LOX_rho_kg_m3, "fuel_density": TrueConst.LH2_rho_kg_m3,
         "is_solid": False, "needs_insulation": True,
+        "ins_coeff_ox": 1.123, "ins_coeff_fuel": 2.88,
         "tank_coeff_ox": 12.16, "tank_coeff_fuel": 9.09
     },
     "LOX/RP1": {
         "data": TrueConst.LOX_RP1, "mixture_ratio": 2.72,
         "oxidizer_density": TrueConst.LOX_rho_kg_m3, "fuel_density": TrueConst.RP1_rho_kg_m3,
         "is_solid": False, "needs_insulation": True,
+        "ins_coeff_ox": 1.123, "ins_coeff_fuel": 0.0,
         "tank_coeff_ox": 12.16, "tank_coeff_fuel": 12.16
     },
     "SOLID": {
@@ -85,19 +88,31 @@ PROPELLANT_INFO = {
 # 4. BASIC GEOMETRY FUNCTIONS
 # ============================================================
 
+# possibly deprecated
 def cylinder_length(volume: float, diameter: float) -> float:
     """Length of a cylindrical tank: L = V / (pi * r^2)."""
     radius = diameter / 2
     return volume / (math.pi * radius**2)
 
-
+# possibly deprecated
 def cylinder_side_area(length: float, diameter: float) -> float:
     return math.pi * diameter * length
 
-
+# possibly deprecated
 def cone_side_area(radius: float, height: float) -> float:
     slant_height = math.sqrt(radius**2 + height**2)
     return math.pi * radius * slant_height
+
+def tank_area(volume, diameter):
+    """Area of a tank with a cylinder and two dome-shaped endcaps"""
+    V = volume
+    D = diameter
+    r = D / 2
+
+    V_domes = (4 / 3) * math.pi * r**3
+    L_cyl = (V - V_domes) / (math.pi * r**2)
+    A = math.pi * D * L_cyl + 4 * math.pi * r**2
+    return A
 
 
 # ============================================================
@@ -133,8 +148,8 @@ def calculate_propellant_geometry(propellant_name, propellant_mass, stage_diamet
     oxidizer_length = cylinder_length(oxidizer_volume, stage_diameter)
     fuel_length = cylinder_length(fuel_volume, stage_diameter)
 
-    oxidizer_area = cylinder_side_area(oxidizer_length, stage_diameter)
-    fuel_area = cylinder_side_area(fuel_length, stage_diameter)
+    oxidizer_area = tank_area(oxidizer_volume, stage_diameter)
+    fuel_area = tank_area(fuel_volume, stage_diameter)
 
     return {
         "oxidizer_mass": oxidizer_mass, "fuel_mass": fuel_mass, "solid_mass": 0,
@@ -142,7 +157,6 @@ def calculate_propellant_geometry(propellant_name, propellant_mass, stage_diamet
         "oxidizer_length": oxidizer_length, "fuel_length": fuel_length, "solid_length": 0,
         "oxidizer_area": oxidizer_area, "fuel_area": fuel_area, "solid_area": 0,
         "total_tank_length": oxidizer_length + fuel_length,
-        "total_tank_area": oxidizer_area + fuel_area,
     }
 
 
@@ -195,11 +209,14 @@ def mer_tank_mass(geometry, info):
     return ox_tank_mass + fuel_tank_mass
 
 
-def mer_insulation_mass(tank_area, needs_insulation):
-    """PLACEHOLDER: cryogenic tank insulation = 2 kg/m^2."""
-    if needs_insulation:
-        return 2.0 * tank_area
-    return 0
+def mer_insulation_mass(geometry, info):
+    if not info["needs_insulation"]:
+        return 0
+
+    ox_ins_mass = info["ins_coeff_ox"] * geometry["oxidizer_area"]
+    fuel_ins_mass = info["ins_coeff_fuel"] * geometry["fuel_area"]
+    return ox_ins_mass + fuel_ins_mass
+    
 
 
 def mer_engine_mass(propellant_name, number_of_engines, thrust_per_engine_n):
@@ -307,7 +324,7 @@ def calculate_stage_subsystems(stage_number, propellant_name, propellant_mass,
     total_installed_thrust_n = number_of_engines * thrust_per_engine_n
 
     # Subsystem masses
-    tank_mass = mer_tank_mass(propellant_mass, geometry["total_tank_area"])
+    tank_mass = mer_tank_mass(geometry, info)
     insulation_mass = mer_insulation_mass(geometry["total_tank_area"], info["needs_insulation"])
     engine_mass = mer_engine_mass(propellant_name, number_of_engines, thrust_per_engine_n)
     thrust_structure_mass = mer_thrust_structure_mass(total_installed_thrust_n)
