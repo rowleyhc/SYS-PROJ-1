@@ -171,7 +171,8 @@ def calculate_engine_count(stage_number, propellant_name, supported_mass):
     if stage_number == 1:
         thrust_to_weight = TrueConst.thrust_weight_ratio_stage_1_min
         thrust_per_engine_mn = propellant_data["thrust_1st_stage_MN"]
-    else:
+    
+    elif stage_number == 2:
         thrust_to_weight = TrueConst.thrust_weight_ratio_stage_n_min
         thrust_per_engine_mn = propellant_data["thrust_2nd_stage_MN"]
 
@@ -200,7 +201,7 @@ def calculate_engine_count(stage_number, propellant_name, supported_mass):
 # Just replace the equations inside them.
 # ============================================================
 
-def mer_tank_mass(geometry, info):
+def mer_tank_mass(geometry, info):  # FINISHED
     if info["is_solid"]:
         return 0
         
@@ -209,7 +210,7 @@ def mer_tank_mass(geometry, info):
     return ox_tank_mass + fuel_tank_mass
 
 
-def mer_insulation_mass(geometry, info):
+def mer_insulation_mass(geometry, info):  # UPDATE TO SPEHRE AREA
     if not info["needs_insulation"]:
         return 0
 
@@ -217,16 +218,22 @@ def mer_insulation_mass(geometry, info):
     fuel_ins_mass = info["ins_coeff_fuel"] * geometry["fuel_area"]
     return ox_ins_mass + fuel_ins_mass
     
-
-
-def mer_engine_mass(propellant_name, number_of_engines, thrust_per_engine_n):
-    """PLACEHOLDER: engine mass. Solid stages have no separate engine mass."""
+    
+def mer_engine_mass(stage_number, propellant_name, number_of_engines, thrust_per_engine_n):  # FINISHED
+    propellant_data = PROPELLANT_INFO[propellant_name]["data"]
+    
     if PROPELLANT_INFO[propellant_name]["is_solid"]:
         return 0
-
-    thrust_per_engine_kn = thrust_per_engine_n / 1000
-    mass_per_engine = 0.08 * thrust_per_engine_kn  # TEMPORARY EQUATION
-    return number_of_engines * mass_per_engine
+	
+    elif stage_number == 1:
+    	exp_ratio = propellant_data["expansion_ratio_1st_stage"]
+    	mass_per_engine = 7.81e4 * thrust_per_engine_n + 3.37e-5 * thrust_per_engine_n * math.sqrt(exp_ratio) + 59
+    	return number_of_engines * mass_per_engine
+    
+    elif stage_number == 2:
+    	exp_ratio = propellant_data["expansion_ratio_2nd_stage"]
+    	mass_per_engine = 7.81e4 * thrust_per_engine_n + 3.37e-5 * thrust_per_engine_n * math.sqrt(exp_ratio) + 59
+		return number_of_engines * mass_per_engine
 
 
 def mer_thrust_structure_mass(total_installed_thrust_n):
