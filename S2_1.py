@@ -256,7 +256,7 @@ def mer_avionics_mass(stage_mass_guess):
     """PLACEHOLDER: avionics mass."""
     return 0.005 * stage_mass_guess
 
-
+#henry: working on these
 def mer_wiring_mass(stage_mass_guess, stage_length):
     """PLACEHOLDER: wiring mass."""
     return 0.002 * stage_mass_guess + stage_length
