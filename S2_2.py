@@ -39,13 +39,14 @@ def create_table_of_masses(results: dict):
         writer.writerow(["Stage", "Component Name", "Value", "Unit"])
         for mass_name in stage1_masses:
             writer.writerow(["Stage 1", mass_name.replace("_", " ").title(), sf(stage1[mass_name]), "kg"])
-        writer.writerow(["Stage 1", "Stage Cost", stage1_cost, "$B (FY2025)"])
+        writer.writerow(["Stage 1", "TotaL Cost", stage1_cost, "$B (FY2025)"])
         for mass_name in stage2_masses:
             writer.writerow(["Stage 2", mass_name.replace("_", " ").title(), sf(stage2[mass_name]), "kg"])
-        writer.writerow(["Stage 2", "Stage Cost", stage2_cost, "$B (FY2025)"])
-        writer.writerow(
-            ["LV", "Total Mass", sf(stage1["stage_mass"] + stage2["stage_mass"]), "kg"]
-        )
+        writer.writerow(["Stage 2", "Total Cost", stage2_cost, "$B (FY2025)"])
+        ## launch vehicle stats
+        writer.writerow(["LV", "Payload", sf(26000), "kg"])
+        writer.writerow(["LV", "Total Mass (system level)", sf(results["systems_gross_mass"]), "kg"])
+        writer.writerow(["LV", "Total Mass (vehicle level)", sf(results["ideal_gross_mass"]), "kg"])
         writer.writerow(["LV", "Total Cost ($B2025)", sf(total_cost), "$B (FY2025)"])
     return path
 
