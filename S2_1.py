@@ -152,11 +152,16 @@ def calculate_propellant_geometry(propellant_name, propellant_mass, stage_diamet
     fuel_area = tank_area(fuel_volume, stage_diameter)
 
     return {
-        "oxidizer_mass": oxidizer_mass, "fuel_mass": fuel_mass, "solid_mass": 0,
-        "oxidizer_volume": oxidizer_volume, "fuel_volume": fuel_volume, "solid_volume": 0,
-        "oxidizer_length": oxidizer_length, "fuel_length": fuel_length, "solid_length": 0,
-        "oxidizer_area": oxidizer_area, "fuel_area": fuel_area, "solid_area": 0,
-        "total_tank_length": oxidizer_length + fuel_length,
+        "oxidizer_mass": oxidizer_mass, 
+        "fuel_mass": fuel_mass, "solid_mass": 0,
+        "oxidizer_volume": oxidizer_volume, 
+        "fuel_volume": fuel_volume, "solid_volume": 0,
+        "oxidizer_length": oxidizer_length, 
+        "fuel_length": fuel_length, "solid_length": 0,
+        "oxidizer_area": oxidizer_area, 
+        "fuel_area": fuel_area, "solid_area": 0,
+        "total_tank_length": oxidizer_length + fuel_length, 
+        "total_tank_area": oxidizer_area + fuel_area,
     }
 
 
@@ -325,7 +330,8 @@ def calculate_stage_subsystems(stage_number, propellant_name, propellant_mass,
 
     # Subsystem masses
     tank_mass = mer_tank_mass(geometry, info)
-    insulation_mass = mer_insulation_mass(geometry["total_tank_area"], info["needs_insulation"])
+    print(geometry)
+    insulation_mass = mer_insulation_mass(geometry, info)
     engine_mass = mer_engine_mass(propellant_name, number_of_engines, thrust_per_engine_n)
     thrust_structure_mass = mer_thrust_structure_mass(total_installed_thrust_n)
     casing_mass = mer_solid_casing_mass(propellant_name, propellant_mass)

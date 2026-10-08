@@ -23,26 +23,30 @@ def create_table_of_masses(results: dict):
     stage1_masses = list(filter(lambda x: "mass" in x, list(stage1.keys())))
     stage2_masses = list(filter(lambda x: "mass" in x, list(stage2.keys())))
     ## calculate costs
-    stage1_total_mass = stage1['stage_mass']
-    stage2_total_mass = stage2['stage_mass']
+    stage1_total_mass = stage1['dry_mass_with_margin']
+    stage2_total_mass = stage2['dry_mass_with_margin']
     
     # input should be in mt
-    total_cost = stage_cost(stage1_total_mass / 1e3) + stage_cost(stage2_total_mass /1e3)
+    stage1_cost = stage_cost(stage1_total_mass / 1e3) # convert to mt 
+    stage2_cost = stage_cost(stage2_total_mass / 1e3)
+    total_cost = stage1_cost + stage2_cost
     ## csv will have 3 columns
     # stage, component_name (total if total mass), mass
     # total masses at the bottom
     path = "csvs/S2_2_table_of_masses.csv"
     with open(path, "w", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
-        writer.writerow(["Stage", "Component Name", "Mass (kg)"])
+        writer.writerow(["Stage", "Component Name", "Value", "Unit"])
         for mass_name in stage1_masses:
-            writer.writerow(["Stage 1", mass_name.replace("_", " ").title(), sf(stage1[mass_name])])
+            writer.writerow(["Stage 1", mass_name.replace("_", " ").title(), sf(stage1[mass_name]), "kg"])
+        writer.writerow(["Stage 1", "Stage Cost", stage1_cost, "$B (FY2025)"])
         for mass_name in stage2_masses:
-            writer.writerow(["Stage 2", mass_name.replace("_", " ").title(), sf(stage2[mass_name])])
+            writer.writerow(["Stage 2", mass_name.replace("_", " ").title(), sf(stage2[mass_name]), "kg"])
+        writer.writerow(["Stage 2", "Stage Cost", stage2_cost, "$B (FY2025)"])
         writer.writerow(
-            ["LV", "Total Mass", sf(stage1["stage_mass"] + stage2["stage_mass"])]
+            ["LV", "Total Mass", sf(stage1["stage_mass"] + stage2["stage_mass"]), "kg"]
         )
-        writer.writerow(["LV", "Total Cost ($B2025)", sf(total_cost/1e3)])
+        writer.writerow(["LV", "Total Cost ($B2025)", sf(total_cost), "$B (FY2025)"])
     return path
 
 if __name__ == "__main__":
