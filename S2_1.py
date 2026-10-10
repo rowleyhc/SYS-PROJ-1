@@ -241,11 +241,9 @@ def mer_engine_mass(stage_number, propellant_name, number_of_engines, thrust_per
 		return number_of_engines * mass_per_engine
 
 
-def mer_thrust_structure_mass(total_installed_thrust_n):
-    """PLACEHOLDER: thrust structure mass."""
-    thrust_kn = total_installed_thrust_n / 1000
-    return 0.02 * thrust_kn  # TEMPORARY EQUATION
-
+def mer_thrust_structure_mass(thrust_per_engine_n, number_of_engines):
+    return 2.55e-4 * (thrust_per_engine_n * number_of_engines)
+    
 
 def mer_solid_casing_mass(propellant_name, propellant_mass):
     """PLACEHOLDER: solid rocket casing mass. Only applies to solids."""
